@@ -57,14 +57,14 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
   );
 
   return (
-    <div className="board-glass panel-radius border border-[var(--border)] p-3 md:p-4 shadow-2xl relative h-full flex">
-      <div ref={wrapRef} className="relative w-full flex-1 min-h-0">
+    <div className="board-glass panel-radius border border-[var(--border)] shadow-2xl relative h-full overflow-hidden">
+      <div ref={wrapRef} className="absolute inset-0">
         <div
           className="absolute left-1/2 top-1/2"
           style={{
             width: baseSize.width,
             height: baseSize.height,
-            transform: `translate(-50%, -50%) scale(${scale.x}, ${scale.y})`,
+            transform: `translate(-50%, -50%) scale(${scale})`,
             transformOrigin: "center center",
           }}
         >
