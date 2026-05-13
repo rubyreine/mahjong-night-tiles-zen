@@ -33,18 +33,16 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
   }, [live]);
 
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState({ x: 1, y: 1, base: 1 });
+  const [scale, setScale] = useState(1);
   useEffect(() => {
     const fit = () => {
       const el = wrapRef.current;
       if (!el) return;
-      const availW = el.clientWidth - 8;
-      const availH = el.clientHeight - 8;
+      const availW = el.clientWidth - 16;
+      const availH = el.clientHeight - 16;
       if (availW <= 0 || availH <= 0) return;
-      const sx = availW / baseSize.width;
-      const sy = availH / baseSize.height;
-      const base = Math.max(0.4, Math.min(Math.min(sx, sy), 2.4));
-      setScale({ x: Math.max(0.4, Math.min(sx, 2.6)), y: Math.max(0.4, Math.min(sy, 2.6)), base });
+      const s = Math.min(availW / baseSize.width, availH / baseSize.height);
+      setScale(Math.max(0.25, Math.min(s, 2.4)));
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -59,14 +57,14 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
   );
 
   return (
-    <div className="board-glass panel-radius border border-[var(--border)] p-3 md:p-4 shadow-2xl relative h-full flex">
-      <div ref={wrapRef} className="relative w-full flex-1 min-h-0">
+    <div className="board-glass panel-radius border border-[var(--border)] shadow-2xl relative h-full overflow-hidden">
+      <div ref={wrapRef} className="absolute inset-0">
         <div
           className="absolute left-1/2 top-1/2"
           style={{
             width: baseSize.width,
             height: baseSize.height,
-            transform: `translate(-50%, -50%) scale(${scale.x}, ${scale.y})`,
+            transform: `translate(-50%, -50%) scale(${scale})`,
             transformOrigin: "center center",
           }}
         >
