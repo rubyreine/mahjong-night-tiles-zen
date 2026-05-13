@@ -173,10 +173,10 @@ function MahjongPage() {
       </div>
 
       {/* Navbar */}
-      <header className="px-6 md:px-10 pt-4 pb-2 flex items-center justify-between gap-4 shrink-0">
-        <h1 className="font-display text-3xl md:text-4xl font-bold tracking-wide leading-none">
-          <span style={{ color: "#F5C842", textShadow: "0 0 18px rgba(245,200,66,0.55)" }}>Maj</span>
-          <span className="text-foreground">hong</span>
+      <header className="px-6 md:px-10 pt-4 pb-2 flex items-center justify-between gap-4 shrink-0 relative z-50">
+        <h1 className="font-logo text-4xl md:text-5xl leading-none">
+          <span style={{ color: "#F5C842", textShadow: "0 0 18px rgba(245,200,66,0.55)" }}>Mah</span>
+          <span className="text-foreground">jong</span>
         </h1>
         <nav className="flex items-center gap-2 md:gap-3">
           <Button
@@ -200,26 +200,9 @@ function MahjongPage() {
         </nav>
       </header>
 
-      {/* Stats bar */}
-      <div className="px-6 md:px-10 mt-2 shrink-0">
-        <div className="pill mx-auto flex items-center gap-3 md:gap-6 px-4 md:px-6 py-2 max-w-4xl">
-          <button
-            onClick={() => setPaused((p) => !p)}
-            className="size-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:bg-foreground/10"
-            aria-label={paused ? "Resume" : "Pause"}
-          >
-            {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
-          </button>
-          <Stat label="time" value={time} />
-          <Stat label="tiles" value={`${remainingTiles}`} />
-          <Stat label="moves" value={`${moves}`} />
-          <Stat label="score" value={`${score}`} />
-        </div>
-      </div>
-
       <main className="px-4 md:px-8 mt-3 pb-4 grid gap-4 lg:grid-cols-[240px_1fr] flex-1 min-h-0">
-        {/* Sidebar */}
-        <aside className="grid gap-3 self-start lg:order-1 order-2 content-start">
+        {/* Sidebar — stretches full column height */}
+        <aside className="flex flex-col gap-3 lg:order-1 order-2 self-stretch h-full">
           <UserPanel />
           <AIHelpPanel onHint={showHint} hintsUsed={hintsUsed} tip={hintTip} />
           <GameMenuPanel
@@ -232,18 +215,33 @@ function MahjongPage() {
           />
         </aside>
 
-        {/* Board */}
-        <section className="lg:order-2 order-1 min-h-0">
-          <Board
-            tiles={tiles}
-            selectedId={selectedId}
-            hintedIds={hintedIds}
-            onTileClick={handleClick}
-            paused={paused}
-            onResume={() => setPaused(false)}
-          />
+        {/* Right column: stats bar + board, same width */}
+        <section className="lg:order-2 order-1 min-h-0 flex flex-col gap-3">
+          <div className="pill flex items-center gap-3 md:gap-6 px-4 md:px-6 py-2 w-full">
+            <button
+              onClick={() => setPaused((p) => !p)}
+              className="size-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:bg-foreground/10"
+              aria-label={paused ? "Resume" : "Pause"}
+            >
+              {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
+            </button>
+            <Stat label="time" value={time} />
+            <Stat label="tiles" value={`${remainingTiles}`} />
+            <Stat label="moves" value={`${moves}`} />
+            <Stat label="score" value={`${score}`} />
+          </div>
+          <div className="flex-1 min-h-0">
+            <Board
+              tiles={tiles}
+              selectedId={selectedId}
+              hintedIds={hintedIds}
+              onTileClick={handleClick}
+              paused={paused}
+              onResume={() => setPaused(false)}
+            />
+          </div>
           {tiles.length > 0 && remainingTiles === 0 && (
-            <div className="mt-4 panel p-6 text-center">
+            <div className="panel p-6 text-center">
               <h2 className="font-display text-2xl text-[var(--gold)] text-glow">You cleared the board.</h2>
               <p className="text-muted-foreground mt-1">+{Math.max(0, 500 - seconds)} bonus points</p>
               <Button onClick={() => startNew(difficulty)} className="mt-4">Play again</Button>
