@@ -33,18 +33,16 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
   }, [live]);
 
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState({ x: 1, y: 1, base: 1 });
+  const [scale, setScale] = useState(1);
   useEffect(() => {
     const fit = () => {
       const el = wrapRef.current;
       if (!el) return;
-      const availW = el.clientWidth - 8;
-      const availH = el.clientHeight - 8;
+      const availW = el.clientWidth - 16;
+      const availH = el.clientHeight - 16;
       if (availW <= 0 || availH <= 0) return;
-      const sx = availW / baseSize.width;
-      const sy = availH / baseSize.height;
-      const base = Math.max(0.4, Math.min(Math.min(sx, sy), 2.4));
-      setScale({ x: Math.max(0.4, Math.min(sx, 2.6)), y: Math.max(0.4, Math.min(sy, 2.6)), base });
+      const s = Math.min(availW / baseSize.width, availH / baseSize.height);
+      setScale(Math.max(0.25, Math.min(s, 2.4)));
     };
     fit();
     const ro = new ResizeObserver(fit);
