@@ -33,7 +33,7 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
   }, [live]);
 
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState({ x: 1, y: 1, base: 1 });
   useEffect(() => {
     const fit = () => {
       const el = wrapRef.current;
@@ -41,8 +41,10 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
       const availW = el.clientWidth - 8;
       const availH = el.clientHeight - 8;
       if (availW <= 0 || availH <= 0) return;
-      const s = Math.min(availW / baseSize.width, availH / baseSize.height);
-      setScale(Math.max(0.4, Math.min(s, 2.4)));
+      const sx = availW / baseSize.width;
+      const sy = availH / baseSize.height;
+      const base = Math.max(0.4, Math.min(Math.min(sx, sy), 2.4));
+      setScale({ x: Math.max(0.4, Math.min(sx, 2.6)), y: Math.max(0.4, Math.min(sy, 2.6)), base });
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -57,17 +59,18 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
   );
 
   return (
-    <div className="felt panel-radius border border-[var(--border)] p-3 md:p-4 shadow-2xl relative h-full flex">
+    <div className="board-glass panel-radius border border-[var(--border)] p-3 md:p-4 shadow-2xl relative h-full flex">
       <div ref={wrapRef} className="relative w-full flex-1 min-h-0">
         <div
           className="absolute left-1/2 top-1/2"
           style={{
-            width: baseSize.width * scale,
-            height: baseSize.height * scale,
-            transform: "translate(-50%, -50%)",
+            width: baseSize.width,
+            height: baseSize.height,
+            transform: `translate(-50%, -50%) scale(${scale.x}, ${scale.y})`,
+            transformOrigin: "center center",
           }}
         >
-          <div className="relative" style={{ width: baseSize.width * scale, height: baseSize.height * scale }}>
+          <div className="relative" style={{ width: baseSize.width, height: baseSize.height }}>
             {sorted.map((t) => (
               <TileView
                 key={t.id}
@@ -76,7 +79,7 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
                 selected={selectedId === t.id}
                 hinted={hintedIds.has(t.id)}
                 onClick={() => onTileClick(t.id)}
-                scale={scale}
+                scale={scale.base}
               />
             ))}
           </div>
