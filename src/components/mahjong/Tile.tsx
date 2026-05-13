@@ -1,9 +1,9 @@
 import { tileGlyph, type Tile } from "@/lib/mahjong";
 import { cn } from "@/lib/utils";
 
-const TILE_W = 44;
-const TILE_H = 60;
-const TILE_DEPTH = 5;
+const TILE_W = 56;
+const TILE_H = 76;
+const TILE_DEPTH = 6;
 
 interface Props {
   tile: Tile;
@@ -14,15 +14,125 @@ interface Props {
   scale?: number;
 }
 
-export function TileView({ tile, free, selected, hinted, onClick, scale = 1 }: Props) {
-  const g = tileGlyph(tile.kind);
-  const colorClass =
-    g.color === "red" ? "text-[oklch(0.5_0.22_25)]"
-    : g.color === "green" ? "text-[oklch(0.42_0.16_155)]"
-    : g.color === "blue" ? "text-[oklch(0.42_0.14_240)]"
-    : g.color === "gold" ? "text-[oklch(0.6_0.18_70)]"
-    : "text-[oklch(0.18_0.04_30)]";
+// Suit-specific face renderers — match TheMahjong.com style
+function TileFace({ kind, scale }: { kind: string; scale: number }) {
+  const s = (n: number) => Math.round(n * scale);
 
+  // Characters: 萬 — big black kanji + red number top-left
+  if (kind.startsWith("char-")) {
+    const n = kind.slice(5);
+    const numerals = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span style={{ color: "#c0392b", fontSize: s(22), lineHeight: 1, fontWeight: 800 }} className="font-han">
+          {numerals[+n]}
+        </span>
+        <span style={{ color: "#1a1a1a", fontSize: s(28), lineHeight: 1, marginTop: s(2), fontWeight: 800 }} className="font-han">
+          萬
+        </span>
+      </div>
+    );
+  }
+
+  // Bamboo: vertical green sticks (1 = bird)
+  if (kind.startsWith("bam-")) {
+    const n = +kind.slice(4);
+    if (n === 1) {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span style={{ fontSize: s(32) }}>🐦</span>
+        </div>
+      );
+    }
+    const sticks = Array.from({ length: n });
+    const cols = n <= 3 ? 1 : n <= 6 ? 2 : 3;
+    return (
+      <div
+        className="absolute inset-0 grid place-items-center p-1"
+        style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: s(2) }}
+      >
+        {sticks.map((_, i) => (
+          <div
+            key={i}
+            style={{
+              width: s(7),
+              height: s(16),
+              background: "linear-gradient(180deg,#2e7a3e,#1d5a2a)",
+              borderRadius: s(2),
+              boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.3)",
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Circles: dot patterns (green ring + red center)
+  if (kind.startsWith("circle-")) {
+    const n = +kind.slice(7);
+    const dots = Array.from({ length: n });
+    const cols = n <= 3 ? 1 : n <= 6 ? 2 : 3;
+    return (
+      <div
+        className="absolute inset-0 grid place-items-center p-1"
+        style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: s(2) }}
+      >
+        {dots.map((_, i) => (
+          <div
+            key={i}
+            style={{
+              width: s(11),
+              height: s(11),
+              borderRadius: "9999px",
+              background: "radial-gradient(circle, #c0392b 0 25%, #fff 28% 45%, #2e7a3e 48% 100%)",
+              boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.25)",
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Winds & Dragons: large centered kanji
+  const g = tileGlyph(kind);
+  let color = "#1a1a1a";
+  if (kind === "dragon-R") color = "#c0392b";
+  else if (kind === "dragon-G") color = "#1d5a2a";
+
+  if (kind === "dragon-W") {
+    return (
+      <div className="absolute inset-2 rounded border-[3px]" style={{ borderColor: "#1a4a8a" }} />
+    );
+  }
+
+  if (kind.startsWith("flower-") || kind.startsWith("season-")) {
+    const num = kind.slice(-1);
+    const isFlower = kind.startsWith("flower-");
+    const labels = isFlower ? ["", "梅", "蘭", "菊", "竹"] : ["", "春", "夏", "秋", "冬"];
+    const accent = isFlower ? "#c0392b" : "#1d5a2a";
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className="flex items-center gap-1">
+          <span style={{ color: accent, fontSize: s(15), fontWeight: 700 }} className="font-han">
+            {labels[+num]}
+          </span>
+          <span style={{ color: "#1a4a8a", fontSize: s(13), fontWeight: 700 }}>{num}</span>
+        </div>
+        <span style={{ fontSize: s(22), lineHeight: 1 }}>{isFlower ? "❀" : "✿"}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <span className="font-han font-bold leading-none" style={{ color, fontSize: s(36) }}>
+        {g.label.length === 1 ? g.label : g.label.slice(0, 1)}
+      </span>
+    </div>
+  );
+}
+
+export function TileView({ tile, free, selected, hinted, onClick, scale = 1 }: Props) {
   const w = TILE_W * scale;
   const h = TILE_H * scale;
   const depth = TILE_DEPTH * scale;
@@ -33,9 +143,9 @@ export function TileView({ tile, free, selected, hinted, onClick, scale = 1 }: P
     <button
       onClick={onClick}
       disabled={!free}
-      aria-label={g.label}
+      aria-label={tileGlyph(tile.kind).label}
       className={cn(
-        "absolute select-none transition-all duration-150 rounded-md flex items-center justify-center overflow-hidden",
+        "absolute select-none transition-all duration-150 flex items-center justify-center overflow-hidden",
         free ? "cursor-pointer hover:-translate-y-0.5" : "cursor-not-allowed",
         selected && "ring-4 ring-[var(--gold)] glow-gold scale-105 z-50",
         hinted && "tile-hint",
@@ -45,25 +155,20 @@ export function TileView({ tile, free, selected, hinted, onClick, scale = 1 }: P
         top,
         width: w,
         height: h,
+        borderRadius: Math.round(7 * scale),
         zIndex: tile.z * 1000 + tile.y * 4 + tile.x,
-        background:
-          "linear-gradient(180deg, #fffdf6 0%, #f7f1e0 70%, #e8dcc0 100%)",
+        background: "linear-gradient(160deg, #ffffff 0%, #fbf6e8 55%, #ece1c2 100%)",
         boxShadow: free
-          ? `0 ${depth}px 0 #b89968, 0 ${depth + 4}px 10px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 0 0 1px #d6bf8f`
-          : `0 ${Math.max(1, depth - 2)}px 0 #8a7349, 0 ${depth}px 6px rgba(0,0,0,0.5), inset 0 0 0 1px #b89968`,
+          ? `inset 1px 1px 0 #ffffff, inset -1px -2px 0 #b69b66, 0 ${depth}px 0 #8a7349, 0 ${depth + 4}px 12px rgba(0,0,0,0.55)`
+          : `inset 0 0 0 1px #b89968, 0 ${Math.max(1, depth - 2)}px 0 #6e5836, 0 ${depth}px 6px rgba(0,0,0,0.5)`,
       }}
     >
-      <span
-        className={cn("font-han leading-none font-bold", colorClass)}
-        style={{ fontSize: Math.round(34 * scale) }}
-      >
-        {g.glyph}
-      </span>
+      <TileFace kind={tile.kind} scale={scale} />
       {!free && (
         <span
           aria-hidden
-          className="absolute inset-0 rounded-md pointer-events-none"
-          style={{ background: "rgba(15,12,8,0.55)" }}
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "rgba(20,15,8,0.45)", borderRadius: "inherit" }}
         />
       )}
     </button>
