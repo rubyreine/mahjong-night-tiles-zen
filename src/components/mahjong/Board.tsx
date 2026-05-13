@@ -79,7 +79,7 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
                 selected={selectedId === t.id}
                 hinted={hintedIds.has(t.id)}
                 onClick={() => onTileClick(t.id)}
-                scale={scale.base}
+                scale={1}
               />
             ))}
           </div>
