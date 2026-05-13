@@ -78,25 +78,44 @@
 .light {
   --background: oklch(0.96 0.02 85);
   --foreground: oklch(0.2 0.02 30);
-  --card: oklch(0.99 0.01 85 / 0.8);
+  --card: oklch(0.99 0.01 85 / 0.85);
   --card-foreground: oklch(0.2 0.02 30);
   --popover: oklch(0.99 0.01 85);
   --popover-foreground: oklch(0.2 0.02 30);
   --primary: oklch(0.45 0.18 30);
   --primary-foreground: oklch(0.98 0.01 85);
-  --secondary: oklch(0.92 0.03 80 / 0.7);
+  --secondary: oklch(0.92 0.03 80 / 0.85);
   --secondary-foreground: oklch(0.25 0.04 30);
-  --muted: oklch(0.92 0.02 85 / 0.7);
-  --muted-foreground: oklch(0.45 0.03 30);
+  --muted: oklch(0.92 0.02 85 / 0.85);
+  --muted-foreground: oklch(0.4 0.03 30);
   --accent: oklch(0.55 0.22 25);
   --accent-foreground: oklch(0.98 0.01 85);
-  --border: oklch(0.45 0.1 30 / 0.25);
+  --border: oklch(0.45 0.1 30 / 0.3);
   --input: oklch(0.9 0.02 85);
   --ring: oklch(0.55 0.2 30 / 0.5);
   --tile: oklch(0.98 0.02 85);
   --tile-foreground: oklch(0.25 0.1 25);
-  --gradient-night: linear-gradient(180deg, oklch(0.95 0.02 85 / 0.6), oklch(0.92 0.03 80 / 0.7));
+  --gold: oklch(0.55 0.18 60);
+  --crimson: oklch(0.5 0.22 25);
+  --gradient-night: linear-gradient(180deg, oklch(0.99 0.02 85 / 0.7), oklch(0.94 0.03 80 / 0.8));
 }
+
+.light .panel {
+  background: linear-gradient(180deg, #fffaf0 0%, #f6ecd6 100%);
+  border-color: rgba(120,80,30,0.25);
+}
+.light .pill {
+  background: rgba(255,250,240,0.85);
+  border-color: rgba(120,80,30,0.25);
+}
+.light .felt {
+  background:
+    radial-gradient(ellipse at center, #fdf6e3 0%, #efe2c2 70%, #e6d4a8 100%);
+}
+.light .text-glow { text-shadow: none; }
+.light .app-bg-image { display: none; }
+.light .app-bg-light { display: block; }
+.app-bg-light { display: none; }
 
 @layer base {
   * { border-color: var(--color-border); }

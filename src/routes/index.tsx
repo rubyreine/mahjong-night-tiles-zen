@@ -27,7 +27,8 @@ export const Route = createFileRoute("/")({
 
 function MahjongPage() {
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
-  const [tiles, setTiles] = useState<Tile[]>(() => generateSolvable("medium"));
+  // Defer random generation to client to avoid SSR hydration mismatch
+  const [tiles, setTiles] = useState<Tile[]>([]);
   const [history, setHistory] = useState<Array<[number, number]>>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [hintedIds, setHintedIds] = useState<Set<number>>(new Set());
@@ -43,15 +44,20 @@ function MahjongPage() {
   const seedRef = useRef(difficulty);
 
   useEffect(() => {
+    setTiles(generateSolvable("medium"));
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle("light", theme === "light");
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
   useEffect(() => {
     if (paused) return;
+    if (tiles.length === 0) return;
     const t = setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => clearInterval(t);
-  }, [paused]);
+  }, [paused, tiles.length]);
 
   const remainingTiles = useMemo(() => tiles.filter((t) => !t.removed).length, [tiles]);
 
@@ -73,6 +79,7 @@ function MahjongPage() {
   const restart = useCallback(() => startNew(seedRef.current), [startNew]);
 
   const handleClick = useCallback((id: number) => {
+    if (paused) return;
     setHintedIds(new Set());
     const tile = tiles.find((t) => t.id === id);
     if (!tile || tile.removed) return;
@@ -97,7 +104,6 @@ function MahjongPage() {
       setMoves((m) => m + 1);
       setScore((s) => s + 10);
       setSelectedId(null);
-      // check no-moves
       setTimeout(() => {
         setTiles((curr) => {
           const liveNow = curr.filter((t) => !t.removed);
@@ -108,7 +114,7 @@ function MahjongPage() {
     } else {
       setSelectedId(id);
     }
-  }, [tiles, selectedId]);
+  }, [tiles, selectedId, paused]);
 
   const undo = useCallback(() => {
     if (history.length === 0) return;
@@ -149,29 +155,40 @@ function MahjongPage() {
   const time = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
   return (
-    <div className="relative min-h-screen text-foreground">
+    <div className="relative h-screen overflow-hidden text-foreground flex flex-col">
       {/* Background */}
       <div className="fixed inset-0 -z-10">
-        <img src={bgImg} alt="" className="h-full w-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, oklch(0.08 0.02 25 / 0.78), oklch(0.08 0.02 25 / 0.92))" }} />
+        <img src={bgImg} alt="" className="app-bg-image h-full w-full object-cover" />
+        <div
+          className="app-bg-light absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse at 30% 20%, #fff8e6 0%, #f5e9c8 40%, #e8d5a0 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 app-bg-image"
+          style={{ background: "linear-gradient(180deg, oklch(0.08 0.02 25 / 0.78), oklch(0.08 0.02 25 / 0.92))" }}
+        />
       </div>
 
       {/* Navbar */}
-      <header className="px-6 md:px-10 pt-6 flex items-center justify-between gap-4">
-        <h1 className="font-display text-3xl md:text-4xl font-semibold text-glow tracking-wide">
-          <span className="text-[var(--gold)]">Mah</span>jong
+      <header className="px-6 md:px-10 pt-4 pb-2 flex items-center justify-between gap-4 shrink-0">
+        <h1 className="font-display text-3xl md:text-4xl font-bold tracking-wide leading-none">
+          <span style={{ color: "#F5C842", textShadow: "0 0 18px rgba(245,200,66,0.55)" }}>Maj</span>
+          <span className="text-foreground">hong</span>
         </h1>
-        <nav className="flex items-center gap-2 md:gap-4">
+        <nav className="flex items-center gap-2 md:gap-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-            className="text-foreground/80 hover:text-foreground hover:bg-white/5"
+            className="text-foreground hover:bg-foreground/10"
           >
             {theme === "dark" ? <Sun className="size-4 mr-1" /> : <Moon className="size-4 mr-1" />}
             change theme
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => setLoginOpen(true)} className="text-foreground/80 hover:bg-white/5">
+          <Button variant="ghost" size="sm" onClick={() => setLoginOpen(true)} className="text-foreground hover:bg-foreground/10">
             <LogIn className="size-4 mr-1" /> log in
           </Button>
           <Button
@@ -184,11 +201,11 @@ function MahjongPage() {
       </header>
 
       {/* Stats bar */}
-      <div className="px-6 md:px-10 mt-5">
-        <div className="pill mx-auto flex items-center gap-4 md:gap-8 px-4 md:px-6 py-3 max-w-5xl">
+      <div className="px-6 md:px-10 mt-2 shrink-0">
+        <div className="pill mx-auto flex items-center gap-3 md:gap-6 px-4 md:px-6 py-2 max-w-4xl">
           <button
             onClick={() => setPaused((p) => !p)}
-            className="size-9 rounded-full border border-[var(--border)] flex items-center justify-center hover:bg-white/5"
+            className="size-8 rounded-full border border-[var(--border)] flex items-center justify-center hover:bg-foreground/10"
             aria-label={paused ? "Resume" : "Pause"}
           >
             {paused ? <Play className="size-4" /> : <Pause className="size-4" />}
@@ -200,9 +217,9 @@ function MahjongPage() {
         </div>
       </div>
 
-      <main className="px-4 md:px-10 mt-6 pb-24 grid gap-6 lg:grid-cols-[260px_1fr]">
+      <main className="px-4 md:px-8 mt-3 pb-4 grid gap-4 lg:grid-cols-[240px_1fr] flex-1 min-h-0">
         {/* Sidebar */}
-        <aside className="grid gap-5 lg:order-1 order-2">
+        <aside className="grid gap-3 self-start lg:order-1 order-2 content-start">
           <UserPanel />
           <AIHelpPanel onHint={showHint} hintsUsed={hintsUsed} tip={hintTip} />
           <GameMenuPanel
@@ -216,14 +233,16 @@ function MahjongPage() {
         </aside>
 
         {/* Board */}
-        <section className="lg:order-2 order-1">
+        <section className="lg:order-2 order-1 min-h-0">
           <Board
             tiles={tiles}
             selectedId={selectedId}
             hintedIds={hintedIds}
             onTileClick={handleClick}
+            paused={paused}
+            onResume={() => setPaused(false)}
           />
-          {remainingTiles === 0 && (
+          {tiles.length > 0 && remainingTiles === 0 && (
             <div className="mt-4 panel p-6 text-center">
               <h2 className="font-display text-2xl text-[var(--gold)] text-glow">You cleared the board.</h2>
               <p className="text-muted-foreground mt-1">+{Math.max(0, 500 - seconds)} bonus points</p>
@@ -233,7 +252,6 @@ function MahjongPage() {
         </section>
       </main>
 
-      {/* No moves dialog */}
       <Dialog open={noMovesOpen} onOpenChange={setNoMovesOpen}>
         <DialogContent>
           <DialogHeader>
@@ -247,7 +265,6 @@ function MahjongPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Pro modal */}
       <Dialog open={proOpen} onOpenChange={setProOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -274,7 +291,6 @@ function MahjongPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Login modal placeholder */}
       <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -293,9 +309,9 @@ function MahjongPage() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="font-display text-base md:text-lg text-foreground/70">{label}</span>
-      <span className="px-3 py-1 rounded-md bg-black/50 border border-[var(--border)] font-mono text-sm md:text-base text-[var(--gold)] min-w-[3.5rem] text-center">
+    <div className="flex items-center gap-2">
+      <span className="font-display text-sm md:text-base text-foreground/70">{label}</span>
+      <span className="px-2.5 py-0.5 rounded-md bg-foreground/10 border border-[var(--border)] font-mono text-sm text-[var(--gold)] min-w-[3rem] text-center">
         {value}
       </span>
     </div>
@@ -304,18 +320,18 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function UserPanel() {
   return (
-    <div className="panel p-5">
-      <div className="font-display text-lg text-[var(--gold)] mb-3">user</div>
+    <div className="panel p-4">
+      <div className="font-display text-base text-[var(--gold)] mb-2">user</div>
       <div className="flex items-center gap-3">
-        <div className="size-12 rounded-full bg-gradient-to-br from-[var(--gold)] to-[var(--crimson)] flex items-center justify-center font-display text-xl text-black/80 shadow-[var(--shadow-glow-gold)]">
+        <div className="size-10 rounded-full bg-gradient-to-br from-[var(--gold)] to-[var(--crimson)] flex items-center justify-center font-display text-lg text-black/80 shadow-[var(--shadow-glow-gold)]">
           客
         </div>
         <div>
-          <div className="font-medium">Guest</div>
+          <div className="font-medium text-sm">Guest</div>
           <div className="text-xs text-[var(--gold)]/80">Level 3 · 240 XP</div>
         </div>
       </div>
-      <div className="mt-3 h-2 rounded-full bg-black/40 overflow-hidden border border-[var(--border)]">
+      <div className="mt-2 h-1.5 rounded-full bg-foreground/10 overflow-hidden border border-[var(--border)]">
         <div className="h-full w-3/5 bg-gradient-to-r from-[var(--gold)] to-[var(--crimson)]" />
       </div>
     </div>
@@ -325,13 +341,13 @@ function UserPanel() {
 function AIHelpPanel({ onHint, hintsUsed, tip }: { onHint: () => void; hintsUsed: number; tip: string }) {
   const remaining = Math.max(0, 3 - hintsUsed);
   return (
-    <div className="panel p-5">
-      <div className="font-display text-lg text-[var(--gold)] mb-3">AI help</div>
-      <Button onClick={onHint} className="w-full bg-[var(--crimson)]/80 hover:bg-[var(--crimson)] border border-[var(--gold)]/30">
+    <div className="panel p-4">
+      <div className="font-display text-base text-[var(--gold)] mb-2">AI help</div>
+      <Button onClick={onHint} size="sm" className="w-full bg-[var(--crimson)]/80 hover:bg-[var(--crimson)] border border-[var(--gold)]/30">
         <Sparkles className="size-4 mr-2" /> Highlight best move
       </Button>
-      <p className="text-xs text-muted-foreground mt-3 leading-relaxed">{tip}</p>
-      <p className="text-[11px] text-[var(--gold)]/70 mt-2">
+      <p className="text-xs text-muted-foreground mt-2 leading-snug">{tip}</p>
+      <p className="text-[11px] text-[var(--gold)]/70 mt-1">
         {remaining > 0 ? `${remaining} free hints left` : "Get unlimited hints with Pro 🔓"}
       </p>
     </div>
@@ -349,12 +365,12 @@ function GameMenuPanel({
   difficulty: Difficulty;
 }) {
   return (
-    <div className="panel p-5">
-      <div className="font-display text-lg text-[var(--gold)] mb-3">game menu</div>
-      <div className="grid gap-2">
+    <div className="panel p-4">
+      <div className="font-display text-base text-[var(--gold)] mb-2">game menu</div>
+      <div className="grid gap-1.5">
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="secondary" className="justify-start"><Plus className="size-4 mr-2" /> New game</Button>
+            <Button variant="secondary" size="sm" className="justify-start"><Plus className="size-4 mr-2" /> New game</Button>
           </DialogTrigger>
           <DialogContent className="max-w-sm">
             <DialogHeader>
@@ -379,13 +395,13 @@ function GameMenuPanel({
             </div>
           </DialogContent>
         </Dialog>
-        <Button variant="secondary" className="justify-start" onClick={onRestart}>
+        <Button variant="secondary" size="sm" className="justify-start" onClick={onRestart}>
           <RotateCcw className="size-4 mr-2" /> Restart
         </Button>
-        <Button variant="secondary" className="justify-start" onClick={onShuffle}>
+        <Button variant="secondary" size="sm" className="justify-start" onClick={onShuffle}>
           <Shuffle className="size-4 mr-2" /> Random layout
         </Button>
-        <Button variant="ghost" disabled={!canUndo} onClick={onUndo} className="justify-start">
+        <Button variant="ghost" size="sm" disabled={!canUndo} onClick={onUndo} className="justify-start">
           ↶ Undo last move
         </Button>
       </div>
