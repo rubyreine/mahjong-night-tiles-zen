@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Tile } from "@/lib/mahjong";
 import { isFree } from "@/lib/mahjong";
 import { TileView, TILE_DIMS } from "./Tile";
+import { Pause } from "lucide-react";
 
 interface Props {
   tiles: Tile[];
@@ -40,8 +41,8 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
       const availW = el.clientWidth - 8;
       const availH = el.clientHeight - 8;
       if (availW <= 0 || availH <= 0) return;
-      const s = Math.min(availW / baseSize.width, availH / baseSize.height, 1.4);
-      setScale(Math.max(0.4, s));
+      const s = Math.min(availW / baseSize.width, availH / baseSize.height);
+      setScale(Math.max(0.4, Math.min(s, 2.4)));
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -56,8 +57,8 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
   );
 
   return (
-    <div className="felt rounded-2xl border border-[var(--border)] p-3 md:p-4 shadow-2xl relative">
-      <div ref={wrapRef} className="relative w-full" style={{ height: "calc(100vh - 240px)", minHeight: 360 }}>
+    <div className="felt panel-radius border border-[var(--border)] p-3 md:p-4 shadow-2xl relative h-full flex">
+      <div ref={wrapRef} className="relative w-full flex-1 min-h-0">
         <div
           className="absolute left-1/2 top-1/2"
           style={{
@@ -83,16 +84,22 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
 
         {paused && (
           <div
-            className="absolute inset-0 flex flex-col items-center justify-center rounded-xl z-[9999]"
-            style={{ background: "rgba(8,6,4,0.65)", backdropFilter: "blur(10px)" }}
+            className="absolute inset-0 flex items-center justify-center panel-radius z-40"
+            style={{ background: "rgba(8,6,4,0.35)", backdropFilter: "blur(2px)" }}
           >
-            <div className="font-display text-5xl md:text-6xl text-[var(--gold)] text-glow mb-6">⏸ Paused</div>
-            <button
-              onClick={onResume}
-              className="px-8 py-3 rounded-full bg-[var(--gold)] text-black font-semibold hover:brightness-110 shadow-lg"
+            <div
+              className="flex flex-col items-center gap-4 px-10 py-8 panel-radius border border-[var(--gold)]/40 shadow-2xl"
+              style={{ background: "linear-gradient(180deg, rgba(20,16,10,0.95), rgba(10,8,5,0.95))" }}
             >
-              Continue
-            </button>
+              <Pause className="size-10 text-[var(--gold)]" />
+              <div className="font-display text-4xl text-[var(--gold)] text-glow">Paused</div>
+              <button
+                onClick={onResume}
+                className="px-8 py-2.5 rounded-lg bg-[var(--gold)] text-black font-semibold hover:brightness-110 shadow-lg"
+              >
+                Continue
+              </button>
+            </div>
           </div>
         )}
       </div>
