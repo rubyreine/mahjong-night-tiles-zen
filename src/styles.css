@@ -1,7 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Jaini&family=Cormorant+Garamond:wght@600;700&family=Noto+Serif+TC:wght@600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Cormorant+Garamond:wght@600;700&family=Noto+Serif+TC:wght@600;700;900&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,39 +41,37 @@
 
 :root {
   --radius: 0.5rem;
-  /* Dark Hong Kong night */
   --background: oklch(0.16 0.02 30);
   --foreground: oklch(0.95 0.02 80);
   --card: oklch(0.18 0.025 35 / 0.55);
   --card-foreground: oklch(0.95 0.02 80);
   --popover: oklch(0.14 0.02 30);
   --popover-foreground: oklch(0.95 0.02 80);
-  --primary: oklch(0.78 0.16 75);          /* gold */
+  --primary: oklch(0.78 0.16 75);
   --primary-foreground: oklch(0.18 0.02 30);
   --secondary: oklch(0.22 0.03 35 / 0.6);
   --secondary-foreground: oklch(0.92 0.04 80);
   --muted: oklch(0.22 0.02 30 / 0.6);
   --muted-foreground: oklch(0.7 0.03 70);
-  --accent: oklch(0.55 0.22 25);           /* crimson */
+  --accent: oklch(0.55 0.22 25);
   --accent-foreground: oklch(0.98 0.02 80);
   --destructive: oklch(0.6 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.78 0.16 75 / 0.25);
   --input: oklch(0.25 0.02 30 / 0.6);
   --ring: oklch(0.78 0.16 75 / 0.6);
-
   --gold: oklch(0.82 0.17 80);
   --crimson: oklch(0.55 0.24 25);
   --jade: oklch(0.55 0.12 155);
   --tile: oklch(0.96 0.03 85);
   --tile-foreground: oklch(0.25 0.05 25);
-
   --gradient-gold: linear-gradient(135deg, oklch(0.85 0.18 85), oklch(0.7 0.18 60));
   --gradient-night: linear-gradient(180deg, oklch(0.14 0.02 25 / 0.85), oklch(0.1 0.02 20 / 0.95));
   --shadow-lantern: 0 0 40px oklch(0.7 0.22 40 / 0.45), 0 0 80px oklch(0.6 0.24 25 / 0.25);
   --shadow-tile: 0 2px 0 oklch(0.7 0.05 60), 0 4px 8px oklch(0 0 0 / 0.5);
-  --shadow-tile-hover: 0 0 24px oklch(0.85 0.18 80 / 0.7), 0 4px 12px oklch(0 0 0 / 0.6);
   --shadow-glow-gold: 0 0 20px oklch(0.82 0.18 80 / 0.7);
+  --bg-image: url('https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?w=1920&q=70');
+  --bg-overlay: rgba(0,0,0,0.65);
 }
 
 .light {
@@ -99,30 +97,21 @@
   --gold: oklch(0.55 0.18 60);
   --crimson: oklch(0.5 0.22 25);
   --gradient-night: linear-gradient(180deg, oklch(0.99 0.02 85 / 0.7), oklch(0.94 0.03 80 / 0.8));
+  --bg-image: url('https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1920&q=70');
+  --bg-overlay: rgba(255,248,235,0.82);
 }
 
-.light .panel {
-  background: linear-gradient(180deg, #fffaf0 0%, #f6ecd6 100%);
-  border-color: rgba(120,80,30,0.25);
-}
-.light .pill {
-  background: rgba(255,250,240,0.85);
-  border-color: rgba(120,80,30,0.25);
-}
-.light .felt {
-  background:
-    radial-gradient(ellipse at center, #fdf6e3 0%, #efe2c2 70%, #e6d4a8 100%);
-}
+.light .panel { background: linear-gradient(180deg, #fffaf0 0%, #f6ecd6 100%); border-color: rgba(120,80,30,0.25); }
+.light .pill { background: rgba(255,250,240,0.85); border-color: rgba(120,80,30,0.25); }
+.light .felt { background: radial-gradient(ellipse at center, #fdf6e3 0%, #efe2c2 70%, #e6d4a8 100%); }
 .light .text-glow { text-shadow: none; }
-.light .app-bg-image { display: none; }
-.light .app-bg-light { display: block; }
-.app-bg-light { display: none; }
 
 @layer base {
   * { border-color: var(--color-border); }
   html, body, #root { height: 100%; }
   body {
-    background-color: var(--color-background);
+    background: var(--bg-overlay), var(--bg-image) center/cover fixed no-repeat;
+    background-blend-mode: normal;
     color: var(--color-foreground);
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   }
@@ -132,26 +121,24 @@
 @layer utilities {
   .glow-gold { box-shadow: var(--shadow-glow-gold); }
   .text-glow { text-shadow: 0 0 12px oklch(0.85 0.18 80 / 0.6), 0 0 24px oklch(0.7 0.2 40 / 0.4); }
-  .font-logo { font-family: 'Jaini', cursive; letter-spacing: 0.02em; }
+  .font-logo { font-family: 'Cinzel', serif; letter-spacing: 0.04em; font-weight: 900; }
   .panel-radius { border-radius: 12px; }
   .pill-radius { border-radius: 16px; }
-  .panel {
-    background: var(--gradient-night);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-  }
-  .pill {
-    background: oklch(0.12 0.02 25 / 0.7);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-  }
+  .panel { background: var(--gradient-night); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 12px; }
+  .pill { background: oklch(0.12 0.02 25 / 0.7); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 16px; }
   .felt {
     background:
       radial-gradient(ellipse at center, oklch(0.28 0.05 155 / 0.6), oklch(0.14 0.03 150 / 0.85) 70%),
       var(--gradient-night);
     background-blend-mode: multiply;
+  }
+  .app-bg-fixed {
+    position: fixed; inset: 0; z-index: -1;
+    background: var(--bg-image) center/cover no-repeat;
+  }
+  .app-bg-overlay {
+    position: fixed; inset: 0; z-index: -1;
+    background: var(--bg-overlay);
   }
 }
 
@@ -161,8 +148,8 @@
 }
 .tile-hint { animation: pulse-gold 1.4s ease-in-out infinite; }
 
-@keyframes lantern-flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
+@keyframes confetti-fall {
+  0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
 }
-.lantern { animation: lantern-flicker 4s ease-in-out infinite; }
+.confetti-piece { position: absolute; top: 0; font-size: 22px; animation: confetti-fall 3.2s linear forwards; pointer-events: none; }

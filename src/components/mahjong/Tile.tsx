@@ -158,9 +158,10 @@ export function TileView({ tile, free, selected, hinted, onClick, scale = 1 }: P
         borderRadius: Math.round(7 * scale),
         zIndex: tile.z * 1000 + tile.y * 4 + tile.x,
         background: "linear-gradient(160deg, #ffffff 0%, #fbf6e8 55%, #ece1c2 100%)",
+        border: `${Math.max(1, Math.round(2 * scale))}px solid #1d5a2a`,
         boxShadow: free
-          ? `inset 1px 1px 0 #ffffff, inset -1px -2px 0 #b69b66, 0 ${depth}px 0 #8a7349, 0 ${depth + 4}px 12px rgba(0,0,0,0.55)`
-          : `inset 0 0 0 1px #b89968, 0 ${Math.max(1, depth - 2)}px 0 #6e5836, 0 ${depth}px 6px rgba(0,0,0,0.5)`,
+          ? `inset 0 0 0 1px #ffffff, 0 ${depth}px 0 #0f3a1a, 0 ${depth + 4}px 12px rgba(0,0,0,0.55)`
+          : `inset 0 0 0 1px #6b8a6b, 0 ${Math.max(1, depth - 2)}px 0 #0f3a1a, 0 ${depth}px 6px rgba(0,0,0,0.5)`,
       }}
     >
       <TileFace kind={tile.kind} scale={scale} />
