@@ -201,8 +201,8 @@ function MahjongPage() {
       {/* Navbar */}
       <header className="px-3 sm:px-6 md:px-10 pt-3 sm:pt-4 pb-2 flex items-center justify-between gap-2 shrink-0 relative z-50">
         <h1 className="font-logo text-2xl sm:text-4xl md:text-5xl leading-none">
-          <span style={{ color: "#F5C842", textShadow: "0 0 18px rgba(245,200,66,0.55)" }}>Maj</span>
-          <span className="text-foreground">hong</span>
+          <span style={{ color: "#F5C842", textShadow: "0 0 18px rgba(245,200,66,0.55)" }}>Mah</span>
+          <span className="text-foreground">jong</span>
         </h1>
         <nav className="flex items-center gap-1 sm:gap-3">
           <button
