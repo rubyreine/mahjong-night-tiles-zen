@@ -132,6 +132,8 @@
       var(--gradient-night);
     background-blend-mode: multiply;
   }
+  .board-glass { background: rgba(0, 0, 0, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  .light .board-glass { background: rgba(255, 245, 220, 0.40); }
   .app-bg-fixed {
     position: fixed; inset: 0; z-index: -1;
     background: var(--bg-image) center/cover no-repeat;
