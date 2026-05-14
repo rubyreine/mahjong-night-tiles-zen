@@ -105,6 +105,8 @@
 .light .pill { background: rgba(255,250,240,0.85); border-color: rgba(120,80,30,0.25); }
 .light .felt { background: radial-gradient(ellipse at center, #fdf6e3 0%, #efe2c2 70%, #e6d4a8 100%); }
 .light .text-glow { text-shadow: none; }
+.logo-mah { color: #F5C842; text-shadow: 0 0 18px rgba(245,200,66,0.55); }
+.light .logo-mah { color: #8B1A1A; text-shadow: none; }
 
 @layer base {
   * { border-color: var(--color-border); }
