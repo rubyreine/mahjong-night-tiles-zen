@@ -1,14 +1,14 @@
 Mahjong Solitiare(Focus and flow)
 
-Mahjong isn’t just a puzzle game here - it’s a small daily ritual.
-Calm visuals, smooth gameplay, and just enough challenge to help you focus, relax, and get into flow.
+mahjong isn’t just a puzzle game here - it’s a small daily ritual.
+calm visuals, smooth gameplay, and just enough challenge to help you focus, relax, and get into flow.
 
 What is it?
 • A modern Mahjong Solitaire platform designed for all devices.
 • Play classic tile-matching with atmospheric themes, smart hints, daily challenges, and progression that keeps every session rewarding.
 
 Who is it for?
-• For anyone who enjoys thoughtful, relaxing games:
+• for anyone who enjoys thoughtful, relaxing games:
 • casual players looking to unwind,
 • people who love aesthetic experiences,
 • and competitive players chasing streaks and leaderboard rankings.
@@ -24,9 +24,8 @@ Features
  • pro upgrade with unlimited hints and custom tile skins
 
 Why people come back
-• Most Mahjong websites feel old and repetitive.
+• most Mahjong websites feel old and repetitive.
 • Mahjong Solitiare is designed to feel modern, calming, and rewarding - something you actually want to return to every day.
 
 Built With
-
-React · TypeScript · Tailwind CSS
+• Lovable • Claude
