@@ -158,6 +158,7 @@ export function TileView({ tile, free, selected, hinted, onClick, scale = 1 }: P
         borderRadius: Math.round(7 * scale),
         zIndex: tile.z * 1000 + tile.y * 4 + tile.x,
         background: "linear-gradient(160deg, #ffffff 0%, #fbf6e8 55%, #ece1c2 100%)",
+        color: "#1a1a1a",
         border: `${Math.max(1, Math.round(2 * scale))}px solid #1d5a2a`,
         boxShadow: free
           ? `inset 0 0 0 1px #ffffff, 0 ${depth}px 0 #0f3a1a, 0 ${depth + 4}px 12px rgba(0,0,0,0.55)`
