@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Mahjong" },
+      { name: "description", content: "Modern Mahjong Solitaire with AI hints, daily challenges, streak system and atmospheric Hong Kong design. Play on any device." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Mahjong" },
+      { property: "og:description", content: "Modern Mahjong Solitaire with AI hints, daily challenges, streak system and atmospheric Hong Kong design. Play on any device." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Mahjong" },
+      { name: "twitter:description", content: "Modern Mahjong Solitaire with AI hints, daily challenges, streak system and atmospheric Hong Kong design. Play on any device." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/15cd125f-c2f5-4b3a-8ec0-e15bd544a967" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/15cd125f-c2f5-4b3a-8ec0-e15bd544a967" },
     ],
     links: [
       {
