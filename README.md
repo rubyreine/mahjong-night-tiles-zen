@@ -14,7 +14,7 @@ Who is it for?
 • and competitive players chasing streaks and leaderboard rankings.
 
 Features
- • classic Mahjong Solitaire with authentic Chinese-style tiles
+ • classic Mahjong Solitaire with authentic chinese-style tiles
  • AI Coach that suggests smart moves and explains strategy
  • daily Challenges shared by all players worldwide
  • daily streaks and progression system
