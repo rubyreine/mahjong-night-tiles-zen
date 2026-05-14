@@ -42,9 +42,8 @@ export function Board({ tiles, selectedId, hintedIds, onTileClick, paused, onRes
       const availH = el.clientHeight - 16;
       if (availW <= 0 || availH <= 0) return;
       const sFit = Math.min(availW / baseSize.width, availH / baseSize.height);
-      // Spread tiles ~15% larger across the board, but never overflow
-      const s = Math.min(sFit * 1.15, sFit);
-      setScale(Math.max(0.25, Math.min(s, 2.6)));
+      // Spread tiles 15% larger across the board (board has overflow:hidden)
+      setScale(Math.max(0.25, Math.min(sFit * 1.15, 2.6)));
     };
     fit();
     const ro = new ResizeObserver(fit);
