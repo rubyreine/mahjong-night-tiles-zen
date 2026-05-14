@@ -131,13 +131,24 @@ function MahjongPage() {
     const tile = tiles.find((t) => t.id === id);
     if (!tile || tile.removed) return;
     const liveNow = tiles.filter((t) => !t.removed);
-    if (!isFree(tile, liveNow)) return;
+    if (!isFree(tile, liveNow)) {
+      console.log("[mahjong] click ignored — tile not free", { id, kind: tile.kind });
+      return;
+    }
 
     if (selectedId === null) { setSelectedId(id); return; }
     if (selectedId === id) { setSelectedId(null); return; }
     const other = tiles.find((t) => t.id === selectedId);
-    if (!other) return;
-    if (tilesMatch(tile, other)) {
+    if (!other || other.removed) { setSelectedId(id); return; }
+    // Re-check that the previously selected tile is still free
+    if (!isFree(other, liveNow)) { setSelectedId(id); return; }
+    const match = tilesMatch(tile, other);
+    console.log("[mahjong] match attempt", {
+      a: { id: other.id, kind: other.kind },
+      b: { id: tile.id, kind: tile.kind },
+      match,
+    });
+    if (match) {
       setTiles((prev) => prev.map((t) => (t.id === id || t.id === selectedId ? { ...t, removed: true } : t)));
       setHistory((h) => [...h, [selectedId!, id]]);
       setMoves((m) => m + 1);
