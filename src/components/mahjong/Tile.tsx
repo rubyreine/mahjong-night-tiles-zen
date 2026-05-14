@@ -118,7 +118,7 @@ function TileFace({ kind, scale }: { kind: string; scale: number }) {
           </span>
           <span style={{ color: "#1a4a8a", fontSize: s(13), fontWeight: 700 }}>{num}</span>
         </div>
-        <span style={{ fontSize: s(22), lineHeight: 1 }}>{isFlower ? "❀" : "✿"}</span>
+        <span style={{ fontSize: s(22), lineHeight: 1, color: accent }}>{isFlower ? "❀" : "✿"}</span>
       </div>
     );
   }
