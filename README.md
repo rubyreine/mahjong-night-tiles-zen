@@ -1,7 +1,7 @@
 Mahjong Solitiare(Focus and flow)
 
 
-As a desigber? who never had experience in development in websites, I proudly want to announce my game - mahjong solitiare!!!
+As a designer, who never had experience in development in websites, I proudly want to announce my game - mahjong solitiare!!!
 
 mahjong isn’t just a puzzle game here - it’s a small daily ritual with calm visuals, smooth gameplay, and just enough challenge to help you focus, relax, and get into flow and develop your logic skills
 
